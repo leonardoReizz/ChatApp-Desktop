@@ -1,3 +1,5 @@
+/* eslint-disable import/no-cycle */
+/* eslint-disable import/prefer-default-export */
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
 /**
@@ -10,10 +12,12 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import Store from 'electron-store';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import IPCUser from './IPC/User';
 
 class AppUpdater {
   constructor() {
@@ -23,7 +27,22 @@ class AppUpdater {
   }
 }
 
+export const store = new Store({ encryptionKey: 'Key' });
+
+ipcMain.on('electron-store-get', async (event, val) => {
+  event.returnValue = store.get(val);
+});
+ipcMain.on('electron-store-set', async (event, key, val) => {
+  store.set(key, val);
+});
+
 let mainWindow: BrowserWindow | null = null;
+
+[...IPCUser].forEach((p) => {
+  const key = Object.keys(p)[0];
+  const value = Object.values(p)[0];
+  ipcMain.on(key, value);
+});
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;

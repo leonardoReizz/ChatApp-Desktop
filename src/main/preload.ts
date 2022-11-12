@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-
-export type Channels = 'ipc-example';
+import { Channels } from './types';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -20,4 +19,15 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
   },
+  store: {
+    get(key: string) {
+      return ipcRenderer.sendSync('electron-store-get', key);
+    },
+    set(property: string, val: any) {
+      ipcRenderer.send('electron-store-set', property, val);
+    },
+    // Other method you want to add like has(), reset(), etc.
+  },
+  // Any other methods you want to expose in the window object.
+  // ...
 });
