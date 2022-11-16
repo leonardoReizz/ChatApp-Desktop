@@ -5,3 +5,10 @@ export interface CurrentUser {
   email: string;
   profilePicture: string | undefined;
 }
+
+export interface Friends {
+  _id: string;
+  fullName: string;
+  imageProfile: string;
+  status: string;
+}

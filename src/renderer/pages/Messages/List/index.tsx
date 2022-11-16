@@ -1,17 +1,39 @@
 /* eslint-disable no-unneeded-ternary */
+/* eslint-disable no-underscore-dangle */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { User } from 'renderer/types/types';
+import { CurrentUser } from './types';
+
 import nullPicture from '../../../../../assets/images/nullProfilePicture.png';
 
 import styles from './styles.module.sass';
-import { CurrentUser } from './types';
+import { UserType } from '../../../../main/IPC/User/types';
+import User from '../../../components/User';
 
-const List = (): JSX.Element => {
+interface ListProps {
+  handleOpenChat(user: Omit<UserType, 'token'>): void;
+}
+
+const List = ({ handleOpenChat }: ListProps): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [myFriends, setMyFriends] = useState<Omit<UserType, 'token'>[]>([]);
+
+  const user = window.electron.store.get('user') as UserType;
 
   useEffect(() => {
-    const user = window.electron.store.get('user') as User;
+    window.electron.ipcRenderer.sendMessage('getMyFriends', {});
+  },[]);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on(
+      'getMyFriendsResponse',
+      (result: Omit<UserType, 'token'>[]) => {
+        setMyFriends(result);
+      }
+    );
+  },[]);
+
+  useEffect(() => {
     const profilePicture = window.electron.store.get(
       'userProfilePicture'
     ) as string;
@@ -25,6 +47,10 @@ const List = (): JSX.Element => {
       nameAndSurname,
     });
   }, []);
+
+  const handleOpenImageProfile = () => {
+
+  }
 
   return (
     <div className={styles.list}>
@@ -46,9 +72,16 @@ const List = (): JSX.Element => {
           </div>
         </div>
       </header>
-      <ul>
-        <li>a</li>
-      </ul>
+      <main>
+        {myFriends.map((friend) => (
+          <User
+            key={friend._id}
+            user={friend}
+            onClick={() => handleOpenChat(friend)}
+            onClickImage={handleOpenImageProfile}
+          />
+        ))}
+      </main>
     </div>
   );
 };

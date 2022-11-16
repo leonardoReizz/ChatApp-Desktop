@@ -18,6 +18,8 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import IPCUser from './IPC/User';
+import IPCFriends from './IPC/Friends';
+import Program from './IPC/Program';
 
 class AppUpdater {
   constructor() {
@@ -38,7 +40,19 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
 
 let mainWindow: BrowserWindow | null = null;
 
+[...Program].forEach((p) => {
+  const key = Object.keys(p)[0];
+  const value = Object.values(p)[0];
+  ipcMain.on(key, value);
+});
+
 [...IPCUser].forEach((p) => {
+  const key = Object.keys(p)[0];
+  const value = Object.values(p)[0];
+  ipcMain.on(key, value);
+});
+
+[...IPCFriends].forEach((p) => {
   const key = Object.keys(p)[0];
   const value = Object.values(p)[0];
   ipcMain.on(key, value);

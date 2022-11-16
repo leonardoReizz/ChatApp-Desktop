@@ -1,13 +1,26 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { TiHome, TiGroup } from 'react-icons/ti';
 import { MdSpaceDashboard, MdInfo } from 'react-icons/md';
 import { RiMessage3Fill, RiSettings4Fill } from 'react-icons/ri';
-import { IoExit } from 'react-icons/io5';
 
+import { IoExit } from 'react-icons/io5';
 import styles from './styles.module.sass';
 
 const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const exit = () => {
+    window.electron.ipcRenderer.sendMessage('clear', {});
+  };
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('clearResponse', () => {
+      navigate('/');
+    });
+  });
+
   return (
     <div className={styles.sidebar}>
       <header>
@@ -43,9 +56,9 @@ const Sidebar = (): JSX.Element => {
         <Link to="/info">
           <MdInfo />
         </Link>
-        <Link to="/exit">
+        <button type="button" onClick={exit}>
           <IoExit />
-        </Link>
+        </button>
       </footer>
     </div>
   );

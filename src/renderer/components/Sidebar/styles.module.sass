@@ -7,6 +7,7 @@
   height: 100vh
   max-width: 70px
   width: 100%
+  z-index: 1000
 
   svg
     font-size: 1.5rem
@@ -56,10 +57,11 @@
 
     a
       transition: 0.2s ease-in-out
-      &:first-child
-        &:hover
-          color: $blue-100
-      &:nth-child(2)
-        &:hover
-          color: $red-100
+      &:hover
+        color: $blue-100
+
+    button
+      color: $white
+      &:hover
+        color: $red-100
 

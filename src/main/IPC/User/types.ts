@@ -1,16 +1,20 @@
-export interface User {
+export type UserType = {
   _id: string;
   fullName: string;
   email: string;
+  status: string;
+  imageProfile: string;
   token: string;
-}
-
-export interface UserLogin {
+};
+export type UserLogin = {
   email: string;
   password: string;
-}
-export interface UserRegister {
+};
+export type UserRegister = {
   fullName: string;
   email: string;
   password: string;
-}
+};
+export type GetUser = {
+  _id: string;
+};

@@ -1,6 +1,10 @@
 export type Channels =
   | 'ipc-example'
+  | 'clear'
+  | 'clearResponse'
   | 'userLogin'
   | 'userLoginResponse'
   | 'userRegister'
-  | 'userRegisterResponse';
+  | 'userRegisterResponse'
+  | 'getMyFriendsResponse'
+  | 'getMyFriends';

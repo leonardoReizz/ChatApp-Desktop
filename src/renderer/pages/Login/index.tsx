@@ -25,6 +25,11 @@ const Login = (): JSX.Element => {
   };
 
   useEffect(() => {
+    if (window.electron.store.get('user') !== undefined) {
+      navigate('/home');
+    }
+  }, [navigate]);
+  useEffect(() => {
     window.electron.ipcRenderer.on(
       'userLoginResponse',
       (result: types.IPCDefaultResult) => {
